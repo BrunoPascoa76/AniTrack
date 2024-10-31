@@ -19,6 +19,28 @@ class AnilistAuth{
 
     final token = Uri.parse(result).fragment.split('&').firstWhere((element) => element.startsWith('access_token=')).split('=')[1];
 
-    await storage.write(key: 'anilist_access_token', value: token);
+    await storage.write(key: 'anilistAccessToken', value: token);
+    final expirationTime = DateTime.now().add(const Duration(days: 365)).toIso8601String();
+    await storage.write(key: 'tokenExpiration', value: expirationTime);
+  }
+  
+  Future<bool> isTokenExpired() async {
+    final expirationTimeString=await storage.read(key:"tokenExpiration");
+
+    if(expirationTimeString==null){
+      return true;
+    }
+
+    final expirationTime=DateTime.parse(expirationTimeString);
+    return DateTime.now().isAfter(expirationTime);
+  }
+
+  Future<String> getValidToken() async {
+    String? anilistAccessToken=await storage.read(key:"anilistAccessToken");
+    if (anilistAccessToken==null || await isTokenExpired()){
+      await authenticate();
+      anilistAccessToken=await storage.read(key:"anilistAccessToken");
+    }
+    return anilistAccessToken!;
   }
 }
