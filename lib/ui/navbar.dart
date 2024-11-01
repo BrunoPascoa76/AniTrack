@@ -1,8 +1,5 @@
-import 'package:anitrack/main.dart';
-import 'package:anitrack/service/anilist_auth.dart';
+import 'package:anitrack/ui/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Navbar extends StatefulWidget{
   const Navbar({super.key});
@@ -47,6 +44,11 @@ class _NavbarState extends State<Navbar> {
             icon: Icon(Icons.calendar_month_outlined),
             label: "Calendar"
           ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.settings),
+            icon: Icon(Icons.settings_outlined),
+            label: "Settings"
+          ),
         ],
       ),
       body: PageView(
@@ -58,7 +60,8 @@ class _NavbarState extends State<Navbar> {
         },
         children: const [
           Text("page 1"),
-          Text("page 2")
+          Text("page 2"),
+          SettingsPage()
         ],
       )
     );
