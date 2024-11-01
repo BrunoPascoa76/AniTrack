@@ -1,4 +1,6 @@
+import 'package:anitrack/ui/navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,11 +12,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PageControllerCubit>(
+          create: (context) => PageControllerCubit()
+        )
+      ],
+      child: MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        home: const Navbar()
       ),
     );
   }
