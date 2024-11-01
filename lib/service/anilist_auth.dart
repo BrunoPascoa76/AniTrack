@@ -1,15 +1,16 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 
 class AnilistAuth{
-  String clientId;
-  String clientSecret;
   String redirectUri="myapp://auth";
   FlutterSecureStorage storage=const FlutterSecureStorage();
-
-  AnilistAuth(this.clientId,this.clientSecret);
+  String? anilistAccessToken;
 
   Future<void> authenticate() async {
+    String clientId=(await storage.read(key:"clientId"))!;
+    //String clientSecret=(await storage.read(key:"clientSecret"))!;
+
     final url=Uri.parse('https://anilist.co/api/v2/oauth/authorize?client_id=$clientId&response_type=token&redirect_uri=$redirectUri');
 
     final result = await FlutterWebAuth.authenticate(
@@ -22,6 +23,8 @@ class AnilistAuth{
     await storage.write(key: 'anilistAccessToken', value: token);
     final expirationTime = DateTime.now().add(const Duration(days: 365)).toIso8601String();
     await storage.write(key: 'tokenExpiration', value: expirationTime);
+
+    anilistAccessToken=token;
   }
   
   Future<bool> isTokenExpired() async {
