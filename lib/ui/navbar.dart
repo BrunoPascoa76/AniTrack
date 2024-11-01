@@ -12,66 +12,55 @@ class Navbar extends StatefulWidget{
 }
 
 class _NavbarState extends State<Navbar> {
+  int _currentIndex=0;
+  final _controller=PageController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final auth=getIt<AnilistAuth>();
-
-    return BlocBuilder<PageCubit,int>(
-      builder: (context,currentIndex){
-        final cubit=context.read<PageCubit>();
-
-        return FutureBuilder<String>(
-          future: auth.getValidToken(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot){
-
-            if(snapshot.hasData){
-              return Scaffold(
-                body: PageView(
-                  controller: cubit.controller,
-                  children: const [
-                    Center(child: Text('Page 1')),
-                    Center(child: Text('Page 2')),
-                    Center(child: Text('Page 3')),
-                  ],
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: currentIndex,
-                  onTap: cubit.goto,
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(currentIndex==0?Icons.video_library:Icons.video_library_outlined),
-                      label: "Watchlist"
-                    ),
-                  ]
-                )
-              );
-            }else{
-              return const CircularProgressIndicator();
-            }
-          }
-        );
-      }
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (index) { 
+          setState(() {
+            _currentIndex=index;
+          });
+          _controller.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut
+          );
+        },
+        selectedIndex: _currentIndex,
+        destinations: const<Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.video_library),
+            icon: Icon(Icons.video_library_outlined),
+            label: "Watchlist"
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.calendar_month),
+            icon: Icon(Icons.calendar_month_outlined),
+            label: "Calendar"
+          ),
+        ],
+      ),
+      body: PageView(
+        controller: _controller,
+        onPageChanged: (index) { 
+          setState(() {
+            _currentIndex=index;
+          });
+        },
+        children: [
+          Text("page 1"),
+          Text("page 2")
+        ],
+      )
     );
-  }
-}
-
-class PageCubit extends Cubit<int>{
-  PageCubit() : super(0);
-
-  final PageController controller=PageController(initialPage: 0);
-
-  @override
-  Future<void> close() {
-    controller.dispose();
-    return super.close();
-  }
-
-  void goto(int page){
-    controller.animateToPage(
-      page,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut
-    );
-    emit(page);
   }
 }

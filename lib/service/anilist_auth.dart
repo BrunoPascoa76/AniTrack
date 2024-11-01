@@ -8,16 +8,20 @@ class AnilistAuth{
   String? anilistAccessToken;
 
   Future<void> authenticate() async {
+    print("starting up");
     String clientId=(await storage.read(key:"clientId"))!;
     //String clientSecret=(await storage.read(key:"clientSecret"))!;
+    final url=Uri.https("anilist.co","/api/v2/oauth/authorize",{
+      "client_id":clientId,
+      "response_type":"token"
+    });
 
-    final url=Uri.parse('https://anilist.co/api/v2/oauth/authorize?client_id=$clientId&response_type=token&redirect_uri=$redirectUri');
-
+    print("auth");
     final result = await FlutterWebAuth.authenticate(
       url: url.toString(),
       callbackUrlScheme: 'myapp', // Your custom scheme
     );
-
+    print("auth return");
     final token = Uri.parse(result).fragment.split('&').firstWhere((element) => element.startsWith('access_token=')).split('=')[1];
 
     await storage.write(key: 'anilistAccessToken', value: token);
