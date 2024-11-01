@@ -56,7 +56,7 @@ class _NavbarState extends State<Navbar> {
             _currentIndex=index;
           });
         },
-        children: [
+        children: const [
           Text("page 1"),
           Text("page 2")
         ],

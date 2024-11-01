@@ -2,7 +2,7 @@
     <application
         android:label="anitrack"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         
         <activity android:name="com.linusu.flutter_web_auth.CallbackActivity" android:exported="true">
             <intent-filter android:label="flutter_web_auth">
