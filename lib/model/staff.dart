@@ -16,6 +16,7 @@ class Staff{
   DateTime? dateOfDeath;
   List<MediaConnection> workedIn;
   List<CharacterConnection> characters;
+  List<MediaConnection> produced;
   
   Staff({
     required this.id,
@@ -32,7 +33,8 @@ class Staff{
     this.dateOfBirth,
     this.dateOfDeath,
     this.workedIn=const [],
-    this.characters=const []
+    this.characters=const [],
+    this.produced=const []
   });
 
   factory Staff.fromJson(Map<String,dynamic> json){
@@ -46,7 +48,36 @@ class Staff{
       description: json["description"] as String?,
       siteUrl: json["siteUrl"] as String,
       staffImageMedium: json["staffImage"]["medium"] as String?,
-      staffImageLarge: json["staffImage"]["large"] as String?
+      staffImageLarge: json["staffImage"]["large"] as String?,
+
+      dateOfBirth: json["dateOfBirth"] as DateTime?,
+      dateOfDeath: json["dateOfDeath"] as DateTime?,
+      workedIn: (json["characterMedia"]["edges"] as List?)?.map((media)=>MediaConnection.fromJson(media)).toList()??[],
+      characters: (json["characters"]["edges"] as List?)?.map((character)=>CharacterConnection.fromJson(character)).toList()??[],
+      produced: (json["staffMedia"]["edges"] as List?)?.map((media)=>MediaConnection.fromJson(media)).toList()??[]
     );
+  }
+
+  Map<String,dynamic> toJson(){
+    return {
+      "id":id,
+      "name":{"full":name},
+      "gender":gender,
+      "languageV2":language,
+      "primaryOccupation":primaryOcupations,
+
+      "description":description,
+      "siteUrl":siteUrl,
+      "staffImage":{
+        "medium":staffImageMedium,
+        "large":staffImageLarge
+      },
+
+      "dateOfBirt":dateOfBirth,
+      "dateOfDeath":dateOfDeath,
+      "characterMedia":{"edges":workedIn},
+      "characters":{"edges":characters},
+      "staffMedia":{"edges":produced}
+    };
   }
 }

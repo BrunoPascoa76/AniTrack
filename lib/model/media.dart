@@ -101,8 +101,8 @@ class Media {
 
       staff:(json["staff"]?["edges"] as List?)?.map((item)=>StaffConnection.fromJson(item)).toList()??[],
       studios:(json["studios"]?["edges"] as List?)?.map((item)=>StudioConnection.fromJson(item)).toList()??[],
-      characters:(json["characters"]?["edges"] as List?)?.map((item)=>CharacterConnection.map(item)).toList()??[],
-      relations: (json["relations"]?["edges"] as List?)?.map((item)=>MediaConnection.map(item)).toList()??[],
+      characters:(json["characters"]?["edges"] as List?)?.map((item)=>CharacterConnection.fromJson(item)).toList()??[],
+      relations: (json["relations"]?["edges"] as List?)?.map((item)=>MediaConnection.fromJson(item)).toList()??[],
 
       siteUrl:json["siteUrl"] as String,
       trailerUrl:json["trailer"]?["thumbnail"] as String?,
@@ -156,20 +156,29 @@ class Media {
 class MediaConnection{
   int mediaId;
   String? relationType;
+  String? characterName;
+  String? characterRole;
+  String? staffRole;
 
-  MediaConnection({required this.mediaId,this.relationType});
+  MediaConnection({required this.mediaId,this.relationType,this.characterName,this.characterRole,this.staffRole});
   
   factory MediaConnection.fromJson(Map<String,dynamic> json){
     return MediaConnection(
       mediaId: json["node"]["id"] as int,
-      relationType: json["relationType"] as String?
+      relationType: json["relationType"] as String?,
+      characterName: json["characterName"] as String?,
+      characterRole: json["characterRole"] as String?,
+      staffRole: json["staffRole"] as String?
     );
   }
 
   Map<String,dynamic> toJson(){
     return {
       "node":{"id":mediaId},
-      "relationType":relationType
+      "relationType":relationType,
+      "characterName":characterName,
+      "characterRole":characterRole,
+      "staffRole":staffRole
     };
   }
 }
