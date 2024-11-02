@@ -165,5 +165,12 @@ class MediaConnection{
       relationType: json["relationType"] as String?
     );
   }
+
+  Map<String,dynamic> toJson(){
+    return {
+      "node":{"id":mediaId},
+      "relationType":relationType
+    };
+  }
 }
 
