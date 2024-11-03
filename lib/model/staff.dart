@@ -1,3 +1,4 @@
+import 'package:anitrack/model/character.dart';
 import 'package:anitrack/model/media.dart';
 
 class Staff{
@@ -78,6 +79,27 @@ class Staff{
       "characterMedia":{"edges":workedIn},
       "characters":{"edges":characters},
       "staffMedia":{"edges":produced}
+    };
+  }
+}
+
+class StaffConnection{
+  int staffId;
+  String role;
+
+  StaffConnection({required this.staffId, required this.role});
+
+  factory StaffConnection.fromJson(Map<String,dynamic> json){
+    return StaffConnection(
+      staffId: json["node"]["id"]  as int,
+      role: json["role"] as String
+    );
+  }
+
+  Map<String,dynamic> toJson(){
+    return {
+      "node":{"id":staffId},
+      "role":role
     };
   }
 }

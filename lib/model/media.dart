@@ -1,3 +1,7 @@
+import 'package:anitrack/model/character.dart';
+import 'package:anitrack/model/staff.dart';
+import 'package:anitrack/model/studio.dart';
+
 class Media {
   int id;
   String titleEnglish;
@@ -159,8 +163,9 @@ class MediaConnection{
   String? characterName;
   String? characterRole;
   String? staffRole;
+  List<int> voiceActors;
 
-  MediaConnection({required this.mediaId,this.relationType,this.characterName,this.characterRole,this.staffRole});
+  MediaConnection({required this.mediaId,this.relationType,this.characterName,this.characterRole,this.staffRole,this.voiceActors=const []});
   
   factory MediaConnection.fromJson(Map<String,dynamic> json){
     return MediaConnection(
@@ -168,7 +173,8 @@ class MediaConnection{
       relationType: json["relationType"] as String?,
       characterName: json["characterName"] as String?,
       characterRole: json["characterRole"] as String?,
-      staffRole: json["staffRole"] as String?
+      staffRole: json["staffRole"] as String?,
+      voiceActors: (json["voiceActors"] as List?)?.map((actor)=>actor["id"] as int).toList()??[]
     );
   }
 
@@ -178,7 +184,8 @@ class MediaConnection{
       "relationType":relationType,
       "characterName":characterName,
       "characterRole":characterRole,
-      "staffRole":staffRole
+      "staffRole":staffRole,
+      "voiceActors":voiceActors.map((actorId)=>{"id":actorId}).toList()
     };
   }
 }
