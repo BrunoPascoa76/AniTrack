@@ -1,0 +1,39 @@
+name: Flutter Analyze
+
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: write  # Ensure write permissions for commenting
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '17.x'
+          
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'beta'
+          
+      - name: Get Flutter dependencies
+        run: flutter pub get
+        
+      - name: Run Flutter Analyze
+        id: analyze
+        run: |
+          flutter analyze . > analysis_output.txt || echo "Analysis failed" > analysis_output.txt
+          cat analysis_output.txt
+          
+      - name: Comment on PR if analysis fails
+        if: failure()  # This step runs only if the previous step fails
+        run: |
+          echo "Commenting on PR due to analysis failure..."
+          gh pr comment ${{ github.event.pull_request.number }} --body "$(cat analysis_output.txt)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
