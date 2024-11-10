@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppearanceSettingsPage extends StatelessWidget {
-  AppearanceSettingsPage({super.key});
+  const AppearanceSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

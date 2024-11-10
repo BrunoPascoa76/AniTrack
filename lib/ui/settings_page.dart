@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget{
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: ListView(
           children: [
-            _generateSettingsField(context, Icons.palette, "Appearance","Change app appearance",AppearanceSettingsPage())
+            _generateSettingsField(context, Icons.palette, "Appearance","Change app appearance",const AppearanceSettingsPage())
           ],
         ),
       )
