@@ -15,10 +15,13 @@ jobs:
           channel: 'beta'
       - run: flutter pub get
       - run: flutter analyze .
-      - run: flutter build apk
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.4.3
-      - name: Publish GitHub Release Artifacts
-        uses: SierraSoftworks/gh-releases@v1.0.7
+      - run: flutter build apk --release
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            app/build/outputs/apk/release/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
     
