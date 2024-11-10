@@ -16,9 +16,17 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze .
       - run: flutter build apk --release
+     
+      - name: Auto Generate Next Release Tag by Date
+        id: generate_tag
+        uses: alexvingg/next-release-tag@v1.0.4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Release with Notes
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.generate_tag.outputs.release_tag }}
           files: |
             app/build/outputs/apk/release/app-release.apk
         env:
