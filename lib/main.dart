@@ -1,3 +1,4 @@
+import 'package:anitrack/model/user.dart';
 import 'package:anitrack/service/anilist_auth.dart';
 import 'package:anitrack/ui/client_setup_page.dart';
 import 'package:anitrack/ui/navbar.dart';
@@ -29,8 +30,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context)=>ThemeCubit(), 
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ThemeCubit()),
+        BlocProvider(create: (context) => UserBloc()),
+      ],
       child: BlocBuilder<ThemeCubit,ThemeController>(
         builder: (context,themeController) {
           AppTheme theme=themeController.themes[themeController.currentTheme];
