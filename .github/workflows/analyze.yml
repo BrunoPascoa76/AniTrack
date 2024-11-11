@@ -4,11 +4,12 @@ on:
   pull_request:
     branches:
       - main
+      - dev
 permissions:
   contents: write  # Ensure write permissions for commenting
 
 jobs:
-  build:
+  analyze:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
