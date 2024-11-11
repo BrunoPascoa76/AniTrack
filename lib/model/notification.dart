@@ -102,13 +102,73 @@ class RelatedMediaAdditionNotification extends Notification{
 }
 
 class MediaDataChangeNotification extends Notification{
-  
+  int mediaId;
+  String? reason;
+
+  MediaDataChangeNotification({super.type="MEDIA_DATA_CHANGE",required super.createdAt,required this.mediaId, this.reason});
+
+  factory MediaDataChangeNotification.fromJson(Map<String,dynamic> json){
+    return MediaDataChangeNotification(
+      createdAt: json["createdAt"] as int,
+      mediaId: json["mediaId"] as int,
+      reason: json["reason"] as String?,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson(){
+    return {
+      ...super.toJson(),
+      "mediaId":mediaId,
+      "reason":reason
+    };
+  }
 }
 
 class MediaMergeNotification extends Notification{
+  int mediaId;
+  String? reason;
 
+  MediaMergeNotification({super.type="MEDIA_MERGE",required super.createdAt,required this.mediaId, this.reason});
+
+  factory MediaMergeNotification.fromJson(Map<String,dynamic> json){
+    return MediaMergeNotification(
+      createdAt: json["createdAt"] as int,
+      mediaId: json["mediaId"] as int,
+      reason: json["reason"] as String?,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson(){
+    return {
+      ...super.toJson(),
+      "mediaId":mediaId,
+      "reason":reason
+    };
+  }
 }
 
 class MediaDeleteNotification extends Notification{
+  int mediaId;
+  String? reason;
 
+  MediaDeleteNotification({super.type="MEDIA_DELETION",required super.createdAt,required this.mediaId, this.reason});
+
+  factory MediaDeleteNotification.fromJson(Map<String,dynamic> json){
+    return MediaDeleteNotification(
+      createdAt: json["createdAt"] as int,
+      mediaId: json["mediaId"] as int,
+      reason: json["reason"] as String?,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson(){
+    return {
+      ...super.toJson(),
+      "mediaId":mediaId,
+      "reason":reason
+    };
+  }
 }
