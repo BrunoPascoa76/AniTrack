@@ -1,3 +1,4 @@
+import 'package:anitrack/model/airing_schedule.dart';
 import 'package:anitrack/model/character.dart';
 import 'package:anitrack/model/staff.dart';
 import 'package:anitrack/model/studio.dart';
@@ -39,6 +40,8 @@ class Media {
   String? bannerImageUrl;
   String? coverImageMedium;
 
+  AiringSchedule? nextAiringEpisode;
+
   Media({
     required this.id,
     required this.titleEnglish,
@@ -73,7 +76,9 @@ class Media {
     required this.siteUrl,
     this.trailerUrl,
     this.bannerImageUrl,
-    this.coverImageMedium
+    this.coverImageMedium,
+
+    this.nextAiringEpisode
   });
 
   factory Media.fromJson(Map<String,dynamic> json){
@@ -111,7 +116,9 @@ class Media {
       siteUrl:json["siteUrl"] as String,
       trailerUrl:json["trailer"]?["thumbnail"] as String?,
       bannerImageUrl:json["bannerImage"] as String?,
-      coverImageMedium:json["coverImage"]?["medium"] as String?
+      coverImageMedium:json["coverImage"]?["medium"] as String?,
+
+      nextAiringEpisode:json["nextAiringEpisode"]!=null?AiringSchedule.fromJson(json["nextAiringEpisode"]):null
     );
   }
 
@@ -152,7 +159,9 @@ class Media {
       "siteUrl":siteUrl,
       "trailer":{"thumbnail":trailerUrl},
       "bannerImage":bannerImageUrl,
-      "coverImage":{"medium":coverImageMedium}
+      "coverImage":{"medium":coverImageMedium},
+
+      "nextAiringEpisode":nextAiringEpisode?.toJson()
     };
   }
 }
