@@ -18,7 +18,6 @@ class AnilistAuth{
       url: url.toString(),
       callbackUrlScheme: 'myapp', // Your custom scheme
     );
-
     final token = Uri.parse(result).fragment.split('&').firstWhere((element) => element.startsWith('access_token=')).split('=')[1];
 
     await storage.write(key: 'anilistAccessToken', value: token);
