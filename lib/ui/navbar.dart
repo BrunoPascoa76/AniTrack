@@ -1,6 +1,8 @@
-import 'package:anitrack/ui/fetch_user_service.dart';
+import 'package:anitrack/model/user.dart';
+import 'package:anitrack/service/fetch_user_service.dart';
 import 'package:anitrack/ui/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -50,51 +52,72 @@ class _NavbarState extends State<Navbar> {
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
-      child: Scaffold(
-        bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (index) { 
-            setState(() {
-              _currentIndex=index;
-            });
-            _controller.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut
-            );
-          },
-          selectedIndex: _currentIndex,
-          destinations: const<Widget>[
-            NavigationDestination(
-              selectedIcon: Icon(Icons.video_library),
-              icon: Icon(Icons.video_library_outlined),
-              label: "Watchlist"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_month),
-              icon: Icon(Icons.calendar_month_outlined),
-              label: "Calendar"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.settings),
-              icon: Icon(Icons.settings_outlined),
-              label: "Settings"
-            ),
-          ],
+      child: FetchUserService(
+        child: Scaffold(
+          bottomNavigationBar: NavigationBar(
+            onDestinationSelected: (index) { 
+              setState(() {
+                _currentIndex=index;
+              });
+              _controller.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut
+              );
+            },
+            selectedIndex: _currentIndex,
+            destinations: <Widget>[
+              const NavigationDestination(
+                selectedIcon: Icon(Icons.video_library),
+                icon: Icon(Icons.video_library_outlined),
+                label: "Watchlist"
+              ),
+              const NavigationDestination(
+                selectedIcon: Icon(Icons.calendar_month),
+                icon: Icon(Icons.calendar_month_outlined),
+                label: "Calendar"
+              ),
+              const NavigationDestination(
+                selectedIcon: Icon(Icons.explore),
+                icon: Icon(Icons.explore_outlined),
+                label: "Explore"
+              ),
+              NavigationDestination(
+                icon:generateProfileIcon(),
+                label: "Profile",
+              ),
+              const NavigationDestination(
+                selectedIcon: Icon(Icons.settings),
+                icon: Icon(Icons.settings_outlined),
+                label: "Settings"
+              ),
+            ],
+          ),
+          body: PageView(
+            controller: _controller,
+            onPageChanged: (index) { 
+              setState(() {
+                _currentIndex=index;
+              });
+            },
+            children: const [
+              Text("watchlist"),
+              Text("calendar"),
+              Text("search"),
+              Text("profile"),
+              SettingsPage()
+            ],
+          )
         ),
-        body: PageView(
-          controller: _controller,
-          onPageChanged: (index) { 
-            setState(() {
-              _currentIndex=index;
-            });
-          },
-          children: const [
-            Text("page 1"),
-            FetchUserService(child:Text("success")),
-            SettingsPage()
-          ],
-        )
       ),
+    );
+  }
+
+  Widget generateProfileIcon(){
+    return BlocBuilder<UserBloc,User?>(
+      builder: (context,state) {
+        return Image.network(state?.avatarMedium ?? "https://s4.anilist.co/file/anilistcdn/user/avatar/medium/default.png",width: 30,height: 30);
+      }
     );
   }
 }

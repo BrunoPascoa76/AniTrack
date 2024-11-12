@@ -9,6 +9,10 @@ class FetchUserService extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    if(context.read<UserBloc>().state!=null){
+      return child;
+    }
+    
     return Query(
       options: QueryOptions(
         document: gql(User.getCurrentUserQuery()),
