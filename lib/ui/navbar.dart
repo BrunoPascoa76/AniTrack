@@ -1,7 +1,9 @@
+import 'package:anitrack/ui/fetch_user_service.dart';
 import 'package:anitrack/ui/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Navbar extends StatefulWidget{
   const Navbar({super.key});
@@ -28,8 +30,8 @@ class _NavbarState extends State<Navbar> {
     
     final AuthLink authLink = AuthLink(
       getToken: () async {
-        final secureStorage=const FlutterSecureStorage();
-        final token=await secureStorage.read(key: "anilist_token");
+        const secureStorage=FlutterSecureStorage();
+        final token=await secureStorage.read(key: "anilistAccessToken");
         return "Bearer $token";
       }
     );
@@ -39,7 +41,7 @@ class _NavbarState extends State<Navbar> {
       GraphQLClient(
         link: link,
         // The default store is the InMemoryStore, which does NOT persist to disk
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(store: HiveStore(Hive.box<Map<dynamic,dynamic>?>("graphql_cache"))),
       ),
     );
   }
@@ -88,7 +90,7 @@ class _NavbarState extends State<Navbar> {
           },
           children: const [
             Text("page 1"),
-            Text("page 2"),
+            FetchUserService(child:Text("success")),
             SettingsPage()
           ],
         )
