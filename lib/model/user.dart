@@ -1,3 +1,5 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 class User{
   int id;
   String  name;
@@ -28,4 +30,37 @@ class User{
       "siteUrl":siteUrl
     };
   }
+
+  static String getCurrentUserQuery(){
+    return """
+      query GetCurrentUser {
+        Viewer {
+          id
+          name
+          avatar {
+            large
+            medium
+          }
+          siteUrl
+        }
+      }
+    """;
+  }
+}
+
+class UserBloc extends Bloc<UserEvent,User?>{
+  UserBloc() : super(null){
+    on<LoadUserEvent>((event, emit) async {
+      emit(User.fromJson(event.data));
+    });
+  }
+
+}
+
+
+class UserEvent{}
+
+class LoadUserEvent extends UserEvent{
+  Map<String,dynamic> data;
+  LoadUserEvent(this.data);
 }
