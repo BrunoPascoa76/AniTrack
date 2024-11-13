@@ -15,3 +15,9 @@
 
 * Number of episodes now display correctly (needed some parenthesis)
 * Added prevention for if the user has marked unreleased episodes as seen
+
+## [V20241113.4] - 2024-11-13
+
+### Fixed
+
+* Fixed weird bug when doing fresh start of app
