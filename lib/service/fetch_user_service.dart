@@ -1,4 +1,6 @@
+import 'package:anitrack/main.dart';
 import 'package:anitrack/model/user.dart';
+import 'package:anitrack/service/anilist_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -13,21 +15,29 @@ class FetchUserService extends StatelessWidget{
       return child;
     }
     
-    return Query(
-      options: QueryOptions(
-        document: gql(User.getCurrentUserQuery()),
-      ),
-      builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
-        if(result.hasException){
-          return Text(result.exception.toString());
-        }
-
-        if(result.isLoading){
+    return FutureBuilder(
+      future: getIt<AnilistAuth>().getValidToken(),
+      builder: (context,snapshot) {
+        if(snapshot.connectionState==ConnectionState.waiting){
           return const Center(child: CircularProgressIndicator());
         }
-        context.read<UserBloc>().add(LoadUserEvent(result.data!["Viewer"]));
-        return child;
-
+        return Query(
+          options: QueryOptions(
+            document: gql(User.getCurrentUserQuery()),
+          ),
+          builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
+            if(result.hasException){
+              return Text(result.exception.toString());
+            }
+        
+            if(result.isLoading){
+              return const Center(child: CircularProgressIndicator());
+            }
+            context.read<UserBloc>().add(LoadUserEvent(result.data!["Viewer"]));
+            return child;
+        
+          }
+        );
       }
     );
   }

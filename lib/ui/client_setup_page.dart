@@ -36,11 +36,12 @@ class ClientSetupState extends State<ClientSetupPage>{
                 return null;
               }
             ),
-            ElevatedButton(onPressed: () {
+            ElevatedButton(onPressed: () async {
               if(_formKey.currentState!.validate()){
                 String clientId=_controller.text;
                 FlutterSecureStorage storage=const FlutterSecureStorage();
                 storage.write(key:"clientId", value: clientId);
+                storage.delete(key:"anilistAccessToken"); //forcibly removing the token to force reauthentication
 
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => const Navbar())
