@@ -14,3 +14,4 @@
 ### Fixed
 
 * Number of episodes now display correctly (needed some parenthesis)
+* Added prevention for if the user has marked unreleased episodes as seen
