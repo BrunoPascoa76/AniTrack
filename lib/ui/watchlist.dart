@@ -113,7 +113,8 @@ class Watchlist extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: TextScroll(
                   media["title"]["english"]??media["title"]["native"]??"",
-                  style:const TextStyle(color: Colors.white)
+                  style:const TextStyle(color: Colors.white),
+                  intervalSpaces: 10,
                 )
               ),
             )
@@ -141,7 +142,7 @@ class Watchlist extends StatelessWidget {
   int _getRemainingNumberOfEpisodes(Map<String,dynamic> item){
     switch (item["media"]["status"]){
       case "RELEASING":
-        return item["media"]["nextAiringEpisode"]?["episode"]??1-1-item["progress"];
+        return (item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
       case "FINISHED":
         return item["media"]["episodes"]-item["progress"];
       case "NOT_YET_RELEASED":
