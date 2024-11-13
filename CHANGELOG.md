@@ -8,3 +8,10 @@
 * Fetches user from anilist and saves it in internal state
 * Added a screen to add clientId (should get someone to test it someday)
 * Watchlists are fetched and displayed
+
+## [V20241113.3] - 2024-11-13
+
+### Fixed
+
+* Number of episodes now display correctly (needed some parenthesis)
+* Added prevention for if the user has marked unreleased episodes as seen
