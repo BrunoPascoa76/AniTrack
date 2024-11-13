@@ -29,9 +29,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.generate_tag.outputs.release_tag }}
+          body_path:  ./CHANGELOG.md
           files: |
             build/app/outputs/flutter-apk/app-release.apk
-            CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
