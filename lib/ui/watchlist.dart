@@ -149,7 +149,7 @@ class Watchlist extends StatelessWidget {
     int result;
     switch (item["media"]["status"]){
       case "RELEASING":
-        result=(item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
+        return (item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
       case "FINISHED":
         result=item["media"]["episodes"]-item["progress"];
       case "NOT_YET_RELEASED":
