@@ -7,6 +7,7 @@ class AnilistAuth{
   String? anilistAccessToken;
 
   Future<void> authenticate() async {
+
     String clientId=(await storage.read(key:"clientId"))!;
     //String clientSecret=(await storage.read(key:"clientSecret"))!;
     final url=Uri.https("anilist.co","/api/v2/oauth/authorize",{
