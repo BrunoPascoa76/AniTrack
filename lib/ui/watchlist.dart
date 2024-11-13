@@ -147,7 +147,7 @@ class Watchlist extends StatelessWidget {
   int _getRemainingNumberOfEpisodes(Map<String,dynamic> item){
     switch (item["media"]["status"]){
       case "RELEASING":
-        return item["media"]["nextAiringEpisode"]?["episode"]??1-1-item["progress"];
+        return (item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
       case "FINISHED":
         return item["media"]["episodes"]-item["progress"];
       case "NOT_YET_RELEASED":
