@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:anitrack/model/user.dart';
 import 'package:anitrack/ui/anime_details_page.dart';
 import 'package:flutter/material.dart';
@@ -145,16 +147,18 @@ class Watchlist extends StatelessWidget {
   }
 
   int _getRemainingNumberOfEpisodes(Map<String,dynamic> item){
+    int result;
     switch (item["media"]["status"]){
       case "RELEASING":
-        return (item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
+        result=(item["media"]["nextAiringEpisode"]?["episode"]??1)-1-item["progress"];
       case "FINISHED":
-        return item["media"]["episodes"]-item["progress"];
+        result=item["media"]["episodes"]-item["progress"];
       case "NOT_YET_RELEASED":
-        return 0;
+        result=0;
       default:
-        return 0;
+        result=0;
     }
+    return max(result, 0);
   }
 
   String _getQueryString(){
