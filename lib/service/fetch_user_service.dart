@@ -27,7 +27,6 @@ class FetchUserService extends StatelessWidget{
           ),
           builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
             if(result.hasException){
-              print(result.exception.toString());
               return Text(result.exception.toString());
             }
         

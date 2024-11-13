@@ -112,11 +112,16 @@ class Watchlist extends StatelessWidget {
             
             Expanded(
               child: Align(
-                alignment: Alignment.bottomCenter,
-                child: TextScroll(
-                  media["title"]["english"]??media["title"]["native"]??"",
-                  style:const TextStyle(color: Colors.white),
-                  intervalSpaces: 10,
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left:5,right:5,bottom:2),
+                  child: TextScroll(
+                    media["title"]["english"]??media["title"]["native"]??"",
+                    style:const TextStyle(color: Colors.white),
+                    intervalSpaces: 10,
+                    fadedBorder: true,
+                    fadedBorderWidth: 0.1,
+                  ),
                 )
               ),
             )
