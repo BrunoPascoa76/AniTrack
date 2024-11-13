@@ -1,6 +1,7 @@
 import 'package:anitrack/model/user.dart';
 import 'package:anitrack/service/fetch_user_service.dart';
 import 'package:anitrack/ui/settings_page.dart';
+import 'package:anitrack/ui/watchlist_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -101,7 +102,7 @@ class _NavbarState extends State<Navbar> {
               });
             },
             children: const [
-              Text("watchlist"),
+              WatchlistGroup(),
               Text("calendar"),
               Text("search"),
               Text("profile"),
