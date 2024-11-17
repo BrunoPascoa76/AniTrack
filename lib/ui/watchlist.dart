@@ -1,4 +1,5 @@
 import 'package:anitrack/model/user.dart';
+import 'package:anitrack/ui/anime_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -32,7 +33,7 @@ class Watchlist extends StatelessWidget {
             ),
             builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
               if(result.hasException){
-                return Text(result.exception.toString());
+                return Scaffold(body: Text(result.exception.toString()));
               }
               if(result.isLoading){
                 return const Center(child: CircularProgressIndicator());
@@ -62,7 +63,7 @@ class Watchlist extends StatelessWidget {
                       controller: scrollController,
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _generateWatchListCard(items[index],theme);
+                        return _generateWatchListCard(items[index],theme,context);
                       }
                     ),
                   ),
@@ -75,50 +76,53 @@ class Watchlist extends StatelessWidget {
     );
   }
 
-  Widget _generateWatchListCard(Map<String,dynamic> item,ThemeData theme){
+  Widget _generateWatchListCard(Map<String,dynamic> item,ThemeData theme,BuildContext context){
     var media=item["media"];
     int remainingEpisodes=_getRemainingNumberOfEpisodes(item);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: Stack(children: [
-        SizedBox.expand(child: Image.network(media["coverImage"]["large"],fit:BoxFit.cover)),
-
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.7),
-                Colors.black,
-              ],
-              stops: const [0.8, 0.9, 1.0], // Adjust these values to control the gradient
+      child: InkWell(
+        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => AnimeDetailsPage(id: media["id"]))),
+        child: Stack(children: [
+          SizedBox.expand(child: Image.network(media["coverImage"]["large"],fit:BoxFit.cover)),
+        
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.7),
+                  Colors.black,
+                ],
+                stops: const [0.8, 0.9, 1.0], // Adjust these values to control the gradient
+              ),
             ),
           ),
-        ),
-
-        Column(
-          children: [
-            if(remainingEpisodes>0)
+        
+          Column(
+            children: [
+              if(remainingEpisodes>0)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: _generateBadge(remainingEpisodes,theme)
+                  )
+                ),
+              
               Expanded(
                 child: Align(
-                  alignment: Alignment.topRight,
-                  child: _generateBadge(remainingEpisodes,theme)
-                )
-              ),
-            
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: TextScroll(
-                  media["title"]["english"]??media["title"]["native"]??"",
-                  style:const TextStyle(color: Colors.white)
-                )
-              ),
-            )
-        ])
-      ]),
+                  alignment: Alignment.bottomCenter,
+                  child: TextScroll(
+                    media["title"]["english"]??media["title"]["native"]??"",
+                    style:const TextStyle(color: Colors.white)
+                  )
+                ),
+              )
+          ])
+        ]),
+      ),
     );
   }
 
