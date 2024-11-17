@@ -113,11 +113,22 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
                                         ),
                                         Divider(color:theme.colorScheme.outline),
                                         Text(
-                                          "original title:${media['title']['native']??"N/A"}",
+                                          "Original Title: ${media['title']['native']??"N/A"}",
                                           style: theme.textTheme.bodySmall,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis
-                                        )
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children:[
+                                          Text("Type: ${_convertFormat(media["format"])}",style: theme.textTheme.bodySmall),
+                                          Text("Status: ${_convertStatus(media["status"])}",style: theme.textTheme.bodySmall),
+                                          ]
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Align(alignment:Alignment.center,child: Text("Started: ${_convertDate(media["startDate"])}",style: theme.textTheme.bodySmall)),
+                                        Align(alignment:Alignment.center,child: Text("Ends: ${_convertDate(media["endDate"])}",style: theme.textTheme.bodySmall)),
                                       ]
                                     ),
                                   )
@@ -132,6 +143,54 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
                 )
               ),
             );
+  }
+
+  String _convertStatus(String status) {
+    switch (status) {
+      case "RELEASING":
+        return "Releasing";
+      case "FINISHED":
+        return "Finished";
+      case "NOT_YET_RELEASED":
+        return "Not yet released";
+      default:
+        return "Unknown";
+    }
+  }
+
+  String _convertDate(Map<String, dynamic> date) {
+    if (date["year"] !=null && date["month"] !=null && date["day"] !=null) {
+      return "${date["year"]}-${date["month"]}-${date["day"]}";
+    }else{
+      return "TBA";
+    }
+  }
+
+  String _convertFormat(String format) {
+    switch (format) {
+      case "TV":
+        return "TV";
+      case "TV_SHORT":
+        return "Short";
+      case "MOVIE":
+        return "Movie";
+      case "SPECIAL":
+        return "Special";
+      case "OVA":
+        return "OVA";
+      case "ONA":
+        return "ONA";
+      case "MUSIC":
+        return "Music";
+      case "MANGA":
+        return "Manga";
+      case "NOVEL":
+        return "LN";
+      case "ONE_SHOT":
+        return "One Shot";
+      default:
+        return "Unknown";
+    }
   }
 
   Stack _generateBanner(Map<String, dynamic> media, ThemeData theme) {
@@ -206,6 +265,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
           seasonYear
           season
           format
+          status
         }
       }
     """;
