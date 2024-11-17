@@ -4,6 +4,7 @@ import 'package:anitrack/ui/client_setup_page.dart';
 import 'package:anitrack/ui/navbar.dart';
 import 'package:anitrack/utils/theme_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -23,6 +24,11 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getTemporaryDirectory(),
   );
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(const MainApp());
 
   await getIt<AnilistAuth>().getValidToken();

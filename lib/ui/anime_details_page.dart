@@ -66,83 +66,92 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
               }
 
               Map<String, dynamic> media = result.data!["Media"];
-              return _generateTitleCard(media, theme);
+              return _generateAnimeDetails(media, theme,refetch);
             });
       }),
     );
   }
 
-  Scaffold _generateTitleCard(Map<String, dynamic> media, ThemeData theme) {
+  Scaffold _generateAnimeDetails(Map<String, dynamic> media, ThemeData theme,VoidCallback? refetch) {
     return Scaffold(
-              body: SafeArea(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    children: [
-                      _generateBanner(media,theme),
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 15),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 200,
-                                padding: const EdgeInsets.all(5),
-                                decoration:  BoxDecoration(
-                                  color:theme.colorScheme.surfaceContainer,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Row(
-                                  children: [
-                                  media["coverImage"]!=null?ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.network(media["coverImage"]["large"], fit: BoxFit.cover)
-                                  ):Container(),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Text(
-                                          media["title"]["english"] ?? media["title"]["native"],
-                                          style: theme.textTheme.bodyLarge,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis
-                                        ),
-                                        Divider(color:theme.colorScheme.outline),
-                                        Text(
-                                          "Original Title: ${media['title']['native']??"N/A"}",
-                                          style: theme.textTheme.bodySmall,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children:[
-                                          Text("Type: ${_convertFormat(media["format"])}",style: theme.textTheme.bodySmall),
-                                          Text("Status: ${_convertStatus(media["status"])}",style: theme.textTheme.bodySmall),
-                                          ]
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Align(alignment:Alignment.center,child: Text("Started: ${_convertDate(media["startDate"])}",style: theme.textTheme.bodySmall)),
-                                        Align(alignment:Alignment.center,child: Text("Ends: ${_convertDate(media["endDate"])}",style: theme.textTheme.bodySmall)),
-                                      ]
-                                    ),
-                                  )
-                                ]),
-                              ),
-                            ],
-                          ),
+      body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: ()async {refetch!(); return Future.value();},
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: [
+                    _generateBanner(media, theme),
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 15),
+                        child: Column(
+                          children: [
+                            _generateTitleCard(theme, media),
+                          ],
                         ),
-                      )
-                    ],
-                  )
-                )
-              ),
-            );
+                      ),
+                    )
+                  ],
+                )),
+          )),
+    );
+  }
+
+  Container _generateTitleCard(ThemeData theme, Map<String, dynamic> media) {
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(children: [
+        media["coverImage"] != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.network(media["coverImage"]["large"],
+                    fit: BoxFit.cover))
+            : Container(),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(media["title"]["english"] ?? media["title"]["native"],
+                    style: theme.textTheme.bodyLarge,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis),
+                Divider(color: theme.colorScheme.outline),
+                Text("Original Title: ${media['title']['native'] ?? "N/A"}",
+                    style: theme.textTheme.bodySmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 10),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Type: ${_convertFormat(media["format"])}",
+                          style: theme.textTheme.bodySmall),
+                      Text("Status: ${_convertStatus(media["status"])}",
+                          style: theme.textTheme.bodySmall),
+                    ]),
+                const SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.center,
+                    child: Text("Started: ${_convertDate(media["startDate"])}",
+                        style: theme.textTheme.bodySmall)),
+                Align(
+                    alignment: Alignment.center,
+                    child: Text("Ends: ${_convertDate(media["endDate"])}",
+                        style: theme.textTheme.bodySmall)),
+              ]),
+        )
+      ]),
+    );
   }
 
   String _convertStatus(String status) {
@@ -159,9 +168,9 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
   }
 
   String _convertDate(Map<String, dynamic> date) {
-    if (date["year"] !=null && date["month"] !=null && date["day"] !=null) {
+    if (date["year"] != null && date["month"] != null && date["day"] != null) {
       return "${date["year"]}-${date["month"]}-${date["day"]}";
-    }else{
+    } else {
       return "TBA";
     }
   }
@@ -214,11 +223,14 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
           ))),
       Align(
           alignment: Alignment.topLeft,
-          child: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(
-            Icons.arrow_back,
-            color: media["bannerImage"] != null ? Colors.white : theme.colorScheme.onSurface,
-          ))
-      )
+          child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Icons.arrow_back,
+                color: media["bannerImage"] != null
+                    ? Colors.white
+                    : theme.colorScheme.onSurface,
+              )))
     ]);
   }
 
