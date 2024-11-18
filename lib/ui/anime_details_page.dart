@@ -89,12 +89,14 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
               slivers: [
                 SliverToBoxAdapter(child: _generateBanner(media, theme)),
                 SliverToBoxAdapter(child: _generateTitleCard(theme, media)),
+                //TODO: add tabs "Overview" (current), "Relations",...
                 SliverToBoxAdapter(
                   child: _generateDescriptionCard(theme, media),
                 ),
+                //TODO: add genres
                 if (media["trailer"] != null)
-                  SliverToBoxAdapter(
-                      child: _generateTrailerCard(theme, media["trailer"])), 
+                  SliverToBoxAdapter(child: _generateTrailerCard(theme, media["trailer"])),
+                //TODO: add tags
               ],
             )),
       )),
