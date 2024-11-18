@@ -57,8 +57,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
         return Query(
             options: QueryOptions(
                 document: gql(_getQueryString(id)),
-                variables: {"mediaId": id, "asHtml": false},
-                pollInterval: const Duration(seconds: 60)),
+                variables: {"mediaId": id, "asHtml": false}),
             builder: (QueryResult result,
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (result.hasException) {
@@ -95,7 +94,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
                 ),
                 if (media["trailer"] != null)
                   SliverToBoxAdapter(
-                      child: _generateTrailerCard(theme, media["trailer"])),
+                      child: _generateTrailerCard(theme, media["trailer"])), 
               ],
             )),
       )),
