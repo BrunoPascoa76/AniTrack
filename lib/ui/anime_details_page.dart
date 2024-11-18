@@ -96,7 +96,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
 
   Widget _generateDescriptionCard(ThemeData theme, Map<String, dynamic> media) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5.0),
       child: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
@@ -107,11 +107,12 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
           header: const Text("Description",style: TextStyle(fontWeight: FontWeight.bold)),
           collapsed: _generateHtmlDescription(media,false),
           expanded: _generateHtmlDescription(media,true),
-          theme:const ExpandableThemeData(
+          theme:ExpandableThemeData(
             useInkWell: true,
             hasIcon: true,
-            tapBodyToExpand: true
-          )
+            tapBodyToExpand: true,
+            iconColor: theme.colorScheme.onSurface
+          ),
         )
       ),
     );
@@ -135,58 +136,61 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
                           );
   }
 
-  Container _generateTitleCard(ThemeData theme, Map<String, dynamic> media) {
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(5),
+  Widget _generateTitleCard(ThemeData theme, Map<String, dynamic> media) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
+      child: Container(
+        height: 200,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(children: [
+          media["coverImage"] != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.network(media["coverImage"]["large"],
+                      fit: BoxFit.cover))
+              : Container(),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(media["title"]["english"] ?? media["title"]["native"],
+                      style: theme.textTheme.bodyLarge,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis),
+                  Divider(color: theme.colorScheme.outline),
+                  Text("Original Title: ${media['title']['native'] ?? "N/A"}",
+                      style: theme.textTheme.bodySmall,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 10),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Type: ${_convertFormat(media["format"])}",
+                            style: theme.textTheme.bodySmall),
+                        Text("Status: ${_convertStatus(media["status"])}",
+                            style: theme.textTheme.bodySmall),
+                      ]),
+                  const SizedBox(height: 10),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text("Started: ${_convertDate(media["startDate"])}",
+                          style: theme.textTheme.bodySmall)),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Text("Ends: ${_convertDate(media["endDate"])}",
+                          style: theme.textTheme.bodySmall)),
+                ]),
+          )
+        ]),
       ),
-      child: Row(children: [
-        media["coverImage"] != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Image.network(media["coverImage"]["large"],
-                    fit: BoxFit.cover))
-            : Container(),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(media["title"]["english"] ?? media["title"]["native"],
-                    style: theme.textTheme.bodyLarge,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis),
-                Divider(color: theme.colorScheme.outline),
-                Text("Original Title: ${media['title']['native'] ?? "N/A"}",
-                    style: theme.textTheme.bodySmall,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 10),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Type: ${_convertFormat(media["format"])}",
-                          style: theme.textTheme.bodySmall),
-                      Text("Status: ${_convertStatus(media["status"])}",
-                          style: theme.textTheme.bodySmall),
-                    ]),
-                const SizedBox(height: 10),
-                Align(
-                    alignment: Alignment.center,
-                    child: Text("Started: ${_convertDate(media["startDate"])}",
-                        style: theme.textTheme.bodySmall)),
-                Align(
-                    alignment: Alignment.center,
-                    child: Text("Ends: ${_convertDate(media["endDate"])}",
-                        style: theme.textTheme.bodySmall)),
-              ]),
-        )
-      ]),
     );
   }
 
