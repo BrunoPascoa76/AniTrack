@@ -5,7 +5,6 @@ import 'package:anitrack/ui/anime_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 class Watchlist extends StatelessWidget {
   final String status;

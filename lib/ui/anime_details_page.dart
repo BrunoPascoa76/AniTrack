@@ -1,6 +1,8 @@
 import 'package:anitrack/model/user.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hive/hive.dart';
@@ -54,12 +56,12 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
         return Query(
             options: QueryOptions(
                 document: gql(_getQueryString(id)),
-                variables: {"mediaId": id},
+                variables: {"mediaId": id,"asHtml":false},
                 pollInterval: const Duration(seconds: 30)),
-            builder: (QueryResult result,
+              builder: (QueryResult result,
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (result.hasException) {
-                return Text(result.exception.toString());
+                return Scaffold(body: Text(result.exception.toString()));
               }
               if (result.isLoading) {
                 return const Center(child: CircularProgressIndicator());
@@ -79,24 +81,58 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
             onRefresh: ()async {refetch!(); return Future.value();},
             child: Align(
                 alignment: Alignment.topCenter,
-                child: Column(
-                  children: [
-                    _generateBanner(media, theme),
-                    SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 15),
-                        child: Column(
-                          children: [
-                            _generateTitleCard(theme, media),
-                          ],
-                        ),
-                      ),
-                    )
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(child: _generateBanner(media, theme)),
+                    SliverToBoxAdapter(child: _generateTitleCard(theme, media)),
+                    SliverToBoxAdapter(
+                      child: _generateDescriptionCard(theme, media),
+                    ),
                   ],
                 )),
           )),
     );
+  }
+
+  Widget _generateDescriptionCard(ThemeData theme, Map<String, dynamic> media) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: ExpandablePanel(
+          header: const Text("Description",style: TextStyle(fontWeight: FontWeight.bold)),
+          collapsed: _generateHtmlDescription(media,false),
+          expanded: _generateHtmlDescription(media,true),
+          theme:const ExpandableThemeData(
+            useInkWell: true,
+            hasIcon: true,
+            tapBodyToExpand: true
+          )
+        )
+      ),
+    );
+  }
+
+  Html _generateHtmlDescription(Map<String, dynamic> media,bool isExpanded) {
+    return Html(
+                            data: media["description"],
+                            style: {
+                              "body": Style(
+                                fontSize: FontSize(16.0),
+                                fontWeight: FontWeight.normal,
+                                margin: Margins.zero,
+                                maxLines: isExpanded?null:3
+                              ),
+                              "p": Style(
+                                margin: Margins.zero,
+                                padding: HtmlPaddings.zero
+                              ),
+                            },
+                          );
   }
 
   Container _generateTitleCard(ThemeData theme, Map<String, dynamic> media) {
@@ -236,7 +272,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
 
   String _getQueryString(int id) {
     return r"""
-      query Media($mediaId: Int) {
+      query Media($mediaId: Int, $asHtml: Boolean) {
         Media(id: $mediaId) {
           title {
             english
@@ -278,6 +314,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
           season
           format
           status
+          description(asHtml: $asHtml)
         }
       }
     """;
