@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
   final int id;
@@ -56,9 +57,9 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
         return Query(
             options: QueryOptions(
                 document: gql(_getQueryString(id)),
-                variables: {"mediaId": id,"asHtml":false},
-                pollInterval: const Duration(seconds: 30)),
-              builder: (QueryResult result,
+                variables: {"mediaId": id, "asHtml": false},
+                pollInterval: const Duration(seconds: 60)),
+            builder: (QueryResult result,
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (result.hasException) {
                 return Scaffold(body: Text(result.exception.toString()));
@@ -68,72 +69,108 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
               }
 
               Map<String, dynamic> media = result.data!["Media"];
-              return _generateAnimeDetails(media, theme,refetch);
+              return _generateAnimeDetails(media, theme, refetch);
             });
       }),
     );
   }
 
-  Scaffold _generateAnimeDetails(Map<String, dynamic> media, ThemeData theme,VoidCallback? refetch) {
+  Scaffold _generateAnimeDetails(
+      Map<String, dynamic> media, ThemeData theme, VoidCallback? refetch) {
     return Scaffold(
       body: SafeArea(
           child: RefreshIndicator(
-            onRefresh: ()async {refetch!(); return Future.value();},
-            child: Align(
-                alignment: Alignment.topCenter,
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(child: _generateBanner(media, theme)),
-                    SliverToBoxAdapter(child: _generateTitleCard(theme, media)),
-                    SliverToBoxAdapter(
-                      child: _generateDescriptionCard(theme, media),
-                    ),
-                  ],
-                )),
-          )),
+        onRefresh: () async {
+          refetch!();
+          return Future.value();
+        },
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _generateBanner(media, theme)),
+                SliverToBoxAdapter(child: _generateTitleCard(theme, media)),
+                SliverToBoxAdapter(
+                  child: _generateDescriptionCard(theme, media),
+                ),
+                if (media["trailer"] != null)
+                  SliverToBoxAdapter(
+                      child: _generateTrailerCard(theme, media["trailer"])),
+              ],
+            )),
+      )),
     );
+  }
+
+  Widget _generateTrailerCard(ThemeData theme, Map<String, dynamic> trailer) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: InkWell(
+            onTap: () => _launchUrl(_generateMediaUrl(trailer)),
+            child: Stack(alignment: Alignment.center, children: [
+              Image.network(trailer["thumbnail"] ?? ""),
+              const Icon(Icons.play_circle_fill, size: 64, color: Colors.white)
+            ])),
+      ),
+    );
+  }
+
+  String _generateMediaUrl(Map<String, dynamic> trailer) {
+    switch (trailer["site"]) {
+      case "youtube":
+        return 'https://www.youtube.com/watch?v=${trailer['id']}';
+      case "dailyMotion":
+        return 'https://www.dailymotion.com/video/${trailer['id']}';
+      default:
+        return "";
+    }
+  }
+
+  Future<void> _launchUrl(String videoUrl) async {
+    if (videoUrl == "") return;
+    if (!await launchUrl(Uri.parse(videoUrl)))
+      throw 'Could not launch $videoUrl';
   }
 
   Widget _generateDescriptionCard(ThemeData theme, Map<String, dynamic> media) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: ExpandablePanel(
-          header: const Text("Description",style: TextStyle(fontWeight: FontWeight.bold)),
-          collapsed: _generateHtmlDescription(media,false),
-          expanded: _generateHtmlDescription(media,true),
-          theme:ExpandableThemeData(
-            useInkWell: true,
-            hasIcon: true,
-            tapBodyToExpand: true,
-            iconColor: theme.colorScheme.onSurface
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(5),
           ),
-        )
-      ),
+          child: ExpandableNotifier(
+            child: ExpandablePanel(
+              header: const Text("Description",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              collapsed: _generateHtmlDescription(media, false),
+              expanded: _generateHtmlDescription(media, true),
+              theme: ExpandableThemeData(
+                  hasIcon: true,
+                  tapBodyToExpand: true,
+                  tapBodyToCollapse: true,
+                  iconColor: theme.colorScheme.onSurface),
+            ),
+          )),
     );
   }
 
-  Html _generateHtmlDescription(Map<String, dynamic> media,bool isExpanded) {
+  Widget _generateHtmlDescription(Map<String, dynamic> media, bool isExpanded) {
     return Html(
-                            data: media["description"],
-                            style: {
-                              "body": Style(
-                                fontSize: FontSize(16.0),
-                                fontWeight: FontWeight.normal,
-                                margin: Margins.zero,
-                                maxLines: isExpanded?null:3
-                              ),
-                              "p": Style(
-                                margin: Margins.zero,
-                                padding: HtmlPaddings.zero
-                              ),
-                            },
-                          );
+      data: media["description"],
+      style: {
+        "body": Style(
+            fontSize: FontSize(16.0),
+            fontWeight: FontWeight.normal,
+            margin: Margins.zero,
+            maxLines: isExpanded ? null : 3),
+        "p": Style(margin: Margins.zero, padding: HtmlPaddings.zero),
+      },
+    );
   }
 
   Widget _generateTitleCard(ThemeData theme, Map<String, dynamic> media) {
@@ -181,7 +218,8 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
                   const SizedBox(height: 10),
                   Align(
                       alignment: Alignment.center,
-                      child: Text("Started: ${_convertDate(media["startDate"])}",
+                      child: Text(
+                          "Started: ${_convertDate(media["startDate"])}",
                           style: theme.textTheme.bodySmall)),
                   Align(
                       alignment: Alignment.center,
@@ -319,6 +357,11 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
           format
           status
           description(asHtml: $asHtml)
+          trailer {
+            id
+            site
+            thumbnail
+          }
         }
       }
     """;
