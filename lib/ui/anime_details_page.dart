@@ -131,8 +131,9 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
 
   Future<void> _launchUrl(String videoUrl) async {
     if (videoUrl == "") return;
-    if (!await launchUrl(Uri.parse(videoUrl)))
+    if (!await launchUrl(Uri.parse(videoUrl))) {
       throw 'Could not launch $videoUrl';
+    }
   }
 
   Widget _generateDescriptionCard(ThemeData theme, Map<String, dynamic> media) {
