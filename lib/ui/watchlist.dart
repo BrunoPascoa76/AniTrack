@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:anitrack/model/user.dart';
+import 'package:anitrack/ui/anime_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 class Watchlist extends StatelessWidget {
   final String status;
@@ -29,12 +29,11 @@ class Watchlist extends StatelessWidget {
                 "userId": state.id,
                 "status": status,
                 "type":"ANIME"
-              },
-              pollInterval: const Duration(seconds: 30)
+              }
             ),
             builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
               if(result.hasException){
-                return Text(result.exception.toString());
+                return Scaffold(body: Text(result.exception.toString()));
               }
               if(result.isLoading){
                 return const Center(child: CircularProgressIndicator());
@@ -64,7 +63,7 @@ class Watchlist extends StatelessWidget {
                       controller: scrollController,
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return _generateWatchListCard(items[index],theme);
+                        return _generateWatchListCard(items[index],theme,context);
                       }
                     ),
                   ),
@@ -77,7 +76,7 @@ class Watchlist extends StatelessWidget {
     );
   }
 
-  Widget _generateWatchListCard(Map<String,dynamic> item,ThemeData theme){
+  Widget _generateWatchListCard(Map<String,dynamic> item,ThemeData theme,BuildContext context){
     var media=item["media"];
     int remainingEpisodes=_getRemainingNumberOfEpisodes(item);
     return ClipRRect(
@@ -112,16 +111,10 @@ class Watchlist extends StatelessWidget {
             
             Expanded(
               child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left:5,right:5,bottom:2),
-                  child: TextScroll(
-                    media["title"]["english"]??media["title"]["native"]??"",
-                    style:const TextStyle(color: Colors.white),
-                    intervalSpaces: 10,
-                    fadedBorder: true,
-                    fadedBorderWidth: 0.1,
-                  ),
+                alignment: Alignment.bottomCenter,
+                child: TextScroll(
+                  media["title"]["english"]??media["title"]["native"]??"",
+                  style:const TextStyle(color: Colors.white)
                 )
               ),
             )
