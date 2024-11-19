@@ -81,50 +81,45 @@ class Watchlist extends StatelessWidget {
     int remainingEpisodes=_getRemainingNumberOfEpisodes(item);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => AnimeDetailsPage(id: media["id"]))),
-        child: Stack(children: [
-          SizedBox.expand(child: Image.network(media["coverImage"]["large"],fit:BoxFit.cover)),
-        
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.7),
-                  Colors.black,
-                ],
-                stops: const [0.8, 0.9, 1.0], // Adjust these values to control the gradient
-              ),
+      child: Stack(children: [
+        SizedBox.expand(child: Image.network(media["coverImage"]["large"],fit:BoxFit.cover)),
+
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.7),
+                Colors.black,
+              ],
+              stops: const [0.8, 0.9, 1.0], // Adjust these values to control the gradient
             ),
           ),
-        
-          Column(
-            children: [
-              if(remainingEpisodes>0)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: _generateBadge(remainingEpisodes,theme)
-                  )
-                ),
-              
+        ),
+
+        Column(
+          children: [
+            if(remainingEpisodes>0)
               Expanded(
                 child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Text(
-                    media["title"]["english"]??media["title"]["native"]??"",
-                    style:const TextStyle(color: Colors.white),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis
-                  )
-                ),
-              )
-          ])
-        ]),
-      ),
+                  alignment: Alignment.topRight,
+                  child: _generateBadge(remainingEpisodes,theme)
+                )
+              ),
+            
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: TextScroll(
+                  media["title"]["english"]??media["title"]["native"]??"",
+                  style:const TextStyle(color: Colors.white)
+                )
+              ),
+            )
+        ])
+      ]),
     );
   }
 
