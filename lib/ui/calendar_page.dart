@@ -103,7 +103,7 @@ class _LazyFetchCalendar extends StatelessWidget {
                       .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)
                       .millisecondsSinceEpoch ~/
                   1000,
-              "mediaIdIn": items.map((e) => e["mediaId"]).toList()
+              "mediaIdIn": items.map((e) => e["media"]["id"]).toList()
             }),
         builder: (QueryResult result,
             {VoidCallback? refetch, FetchMore? fetchMore}) {
@@ -142,7 +142,7 @@ Widget _generateScheduleCard(
     BuildContext context, Map<String, dynamic> schedule) {
   ThemeData theme = Theme.of(context);
   int episode = schedule["episode"] as int;
-  String airingAt = DateFormat("hh:mm", "pt_PT").format(
+  String airingAt = DateFormat("hh:mm").format(
       DateTime.fromMillisecondsSinceEpoch(
           (schedule["airingAt"] as int) * 1000));
 
