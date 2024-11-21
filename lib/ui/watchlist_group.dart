@@ -30,11 +30,32 @@ class WatchlistGroup extends StatelessWidget{
           ),
         ),
         body: const TabBarView(children: [
-          Watchlist(status: "CURRENT"),
-          Watchlist(status: "COMPLETED"),
-          Watchlist(status: "PLANNING")
+          _BuildTabContent(0,Watchlist(status: "CURRENT")),
+          _BuildTabContent(1,Watchlist(status: "COMPLETED")),
+          _BuildTabContent(2,Watchlist(status: "PLANNING"))
         ])
       )
     );
   }
 }
+
+class _BuildTabContent extends StatelessWidget{
+
+  const _BuildTabContent(this.index, this.child);
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final TabController controller = DefaultTabController.of(context);
+
+    // Only build content if it's the selected tab
+    if (controller.index == index) {
+      return child;
+    }
+    return Container(); 
+  }
+}
+
+  

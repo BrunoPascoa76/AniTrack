@@ -27,7 +27,7 @@ class FetchUserService extends StatelessWidget{
           ),
           builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
             if(result.hasException){
-              return Text(result.exception.toString());
+              return Scaffold(body: Text(result.exception.toString(),style: const TextStyle(fontSize: 20)));
             }
         
             if(result.isLoading){
