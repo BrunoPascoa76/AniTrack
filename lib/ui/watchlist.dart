@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:anitrack/model/user.dart';
-import 'package:anitrack/ui/anime_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
