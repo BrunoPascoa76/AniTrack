@@ -111,7 +111,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
         child: InkWell(
             onTap: () => _launchUrl(_generateMediaUrl(trailer)),
             child: Stack(alignment: Alignment.center, children: [
-              Image.network(trailer["thumbnail"] ?? ""),
+              Image.network(trailer["thumbnail"] ?? "",errorBuilder: (context, error, stackTrace) => Image.network("https://www.thewindowsclub.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif",height:100), fit: BoxFit.cover),
               const Icon(Icons.play_circle_fill, size: 64, color: Colors.white)
             ])),
       ),
@@ -163,7 +163,7 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
 
   Widget _generateHtmlDescription(Map<String, dynamic> media, bool isExpanded) {
     return Html(
-      data: media["description"],
+      data: media["description"]??"",
       style: {
         "body": Style(
             fontSize: FontSize(16.0),

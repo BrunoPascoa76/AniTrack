@@ -53,50 +53,61 @@ class _NavbarState extends State<Navbar> {
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
-      client: client,
-      child: FetchUserService(
-          child: Scaffold(
-              bottomNavigationBar: NavigationBar(
-                onDestinationSelected: (index) async {
-                  await _controller.animateToPage(index,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut);
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                selectedIndex: _currentIndex,
-                destinations: <Widget>[
-                  const NavigationDestination(
-                      selectedIcon: Icon(Icons.video_library),
-                      icon: Icon(Icons.video_library_outlined),
-                      label: "Watchlist"),
-                  const NavigationDestination(
-                      selectedIcon: Icon(Icons.calendar_month),
-                      icon: Icon(Icons.calendar_month_outlined),
-                      label: "Calendar"),
-                  const NavigationDestination(
-                      selectedIcon: Icon(Icons.explore),
-                      icon: Icon(Icons.explore_outlined),
-                      label: "Explore"),
-                  NavigationDestination(
-                    icon: generateProfileIcon(),
-                    label: "Profile",
-                  ),
-                  const NavigationDestination(
-                      selectedIcon: Icon(Icons.settings),
-                      icon: Icon(Icons.settings_outlined),
-                      label: "Settings"),
-                ],
-              ),
-              body: PageView(controller:_controller, children: [
-                _BuildTabContent(_currentIndex == 0, const WatchlistGroup()),
-                _BuildTabContent(_currentIndex == 1, const CalendarPage()),
-                _BuildTabContent(_currentIndex == 2, const Text("search")),
-                _BuildTabContent(_currentIndex == 3, const Text("profile")),
-                _BuildTabContent(_currentIndex == 4, const SettingsPage()),
-              ]))),
-    );
+        client: client,
+        child: FetchUserService(
+            child: Scaffold(
+                bottomNavigationBar: NavigationBar(
+                  onDestinationSelected: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                    context.read<SelectedPageCubit>().selectPage(index);
+                  },
+                  selectedIndex: _currentIndex,
+                  destinations: <Widget>[
+                    const NavigationDestination(
+                        selectedIcon: Icon(Icons.video_library),
+                        icon: Icon(Icons.video_library_outlined),
+                        label: "Watchlist"),
+                    const NavigationDestination(
+                        selectedIcon: Icon(Icons.calendar_month),
+                        icon: Icon(Icons.calendar_month_outlined),
+                        label: "Calendar"),
+                    const NavigationDestination(
+                        selectedIcon: Icon(Icons.explore),
+                        icon: Icon(Icons.explore_outlined),
+                        label: "Explore"),
+                    NavigationDestination(
+                      icon: generateProfileIcon(),
+                      label: "Profile",
+                    ),
+                    const NavigationDestination(
+                        selectedIcon: Icon(Icons.settings),
+                        icon: Icon(Icons.settings_outlined),
+                        label: "Settings"),
+                  ],
+                ),
+                body: BlocBuilder<SelectedPageCubit, int>(
+                    builder: (context, state) {
+                  switch (state) {
+                    case 0:
+                      return const WatchlistGroup();
+                    case 1:
+                      return const CalendarPage();
+                    case 2:
+                      return const Center(
+                        child: Text("Explore"),
+                      );
+                    case 3:
+                      return const Center(
+                        child: Text("Profile"),
+                      );
+                    case 4:
+                      return const SettingsPage();
+                    default:
+                      return const WatchlistGroup();
+                  }
+                }))));
   }
 
   Widget generateProfileIcon() {
@@ -110,18 +121,8 @@ class _NavbarState extends State<Navbar> {
   }
 }
 
-class _BuildTabContent extends StatelessWidget {
-  const _BuildTabContent(this.doRender, this.child);
+class SelectedPageCubit extends Cubit<int> {
+  SelectedPageCubit() : super(0);
 
-  final bool doRender;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    // Only build content if it's the selected tab
-    if (doRender) {
-      return child;
-    }
-    return Container();
-  }
+  void selectPage(int index) => emit(index);
 }

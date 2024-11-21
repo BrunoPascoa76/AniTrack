@@ -48,6 +48,7 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => UserBloc()),
         BlocProvider(create: (context) => CalendarCubit()),
+        BlocProvider(create: (context) => SelectedPageCubit()),
       ],
       child: BlocBuilder<ThemeCubit,ThemeController>(
         builder: (context,themeController) {
