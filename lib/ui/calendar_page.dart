@@ -87,11 +87,9 @@ class _LazyFetchCalendar extends StatelessWidget {
   }
 
   Query<Object?> _calendarQuery(CalendarDisplay display, BuildContext context, List items) {
-    print(_getCalendarQueryString(display));
-    print(items.map((e) => e["media"]["id"]).toList());
     return Query(
         options: QueryOptions(
-            fetchPolicy: FetchPolicy.networkOnly,
+            pollInterval: const Duration(seconds: 30),
             document: gql(_getCalendarQueryString(display)),
             variables: {
               "sort": "TIME",
@@ -105,7 +103,7 @@ class _LazyFetchCalendar extends StatelessWidget {
                       .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)
                       .millisecondsSinceEpoch ~/
                   1000,
-              "mediaIdIn": [162002, 163134, 171018, 170732, 168139, 171038, 157965, 176508, 170938, 163135]
+              "mediaIdIn": items.map((e) => e["mediaId"]).toList()
             }),
         builder: (QueryResult result,
             {VoidCallback? refetch, FetchMore? fetchMore}) {
@@ -144,7 +142,7 @@ Widget _generateScheduleCard(
     BuildContext context, Map<String, dynamic> schedule) {
   ThemeData theme = Theme.of(context);
   int episode = schedule["episode"] as int;
-  String airingAt = DateFormat("hh:mm").format(
+  String airingAt = DateFormat("hh:mm", "pt_PT").format(
       DateTime.fromMillisecondsSinceEpoch(
           (schedule["airingAt"] as int) * 1000));
 
@@ -291,7 +289,7 @@ String _getWatchingQueryString() {
 }
 
 _generateSelectableBox(ThemeData theme, CalendarCubit cubit,
-    CalendarDisplay display, CalendarDisplay current_display, String label) {
+    CalendarDisplay display, CalendarDisplay currentDisplay, String label) {
   BorderRadius? radius;
 
   if (display == CalendarDisplay.all) {
@@ -307,7 +305,7 @@ _generateSelectableBox(ThemeData theme, CalendarCubit cubit,
       child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: theme.colorScheme.secondary),
-            color: display == current_display
+            color: display == currentDisplay
                 ? theme.colorScheme.secondaryContainer
                 : Colors.transparent,
             borderRadius: radius,
@@ -316,7 +314,7 @@ _generateSelectableBox(ThemeData theme, CalendarCubit cubit,
           height: theme.buttonTheme.height,
           child: Align(
               alignment: Alignment.center,
-              child: display == current_display
+              child: display == currentDisplay
                   ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(Icons.check,
                           color: theme.colorScheme.onSecondaryContainer),

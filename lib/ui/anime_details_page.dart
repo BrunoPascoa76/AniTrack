@@ -57,7 +57,9 @@ class _AnimeDetailsState extends State<AnimeDetailsPage> {
         return Query(
             options: QueryOptions(
                 document: gql(_getQueryString(id)),
-                variables: {"mediaId": id, "asHtml": false}),
+                variables: {"mediaId": id, "asHtml": false},
+                pollInterval: const Duration(seconds: 30),
+            ),
             builder: (QueryResult result,
                 {VoidCallback? refetch, FetchMore? fetchMore}) {
               if (result.hasException) {
