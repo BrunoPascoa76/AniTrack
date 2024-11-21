@@ -58,7 +58,12 @@ Widget _generateCalendarColumn(BuildContext context, List airingSchedules, int w
 
   List validAiringSchedules = airingSchedules.where((element)=>DateTime.fromMillisecondsSinceEpoch((element["airingAt"] as int)*1000).weekday==weekday).toList();
 
-
+  if(validAiringSchedules.isEmpty){
+    return const Center(child:Column(children: [
+      Text("(╥﹏╥)",style: TextStyle(fontSize: 50)),
+      Text("Nothing airing today",style: TextStyle(fontSize: 20))
+    ]));
+  }
 
   return GridView.builder(
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
