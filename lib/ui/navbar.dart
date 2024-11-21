@@ -1,5 +1,6 @@
 import 'package:anitrack/model/user.dart';
 import 'package:anitrack/service/fetch_user_service.dart';
+import 'package:anitrack/ui/calendar_page.dart';
 import 'package:anitrack/ui/settings_page.dart';
 import 'package:anitrack/ui/watchlist_group.dart';
 import 'package:flutter/material.dart';
@@ -57,14 +58,14 @@ class _NavbarState extends State<Navbar> {
         child: Scaffold(
           bottomNavigationBar: NavigationBar(
             onDestinationSelected: (index) { 
-              setState(() {
-                _currentIndex=index;
-              });
               _controller.animateToPage(
                 index,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut
               );
+              setState(() {
+                _currentIndex=index;
+              });
             },
             selectedIndex: _currentIndex,
             destinations: <Widget>[
@@ -94,20 +95,30 @@ class _NavbarState extends State<Navbar> {
               ),
             ],
           ),
-          body: PageView(
+          body: PageView.builder(
             controller: _controller,
             onPageChanged: (index) { 
               setState(() {
                 _currentIndex=index;
               });
             },
-            children: const [
-              WatchlistGroup(),
-              Text("calendar"),
-              Text("search"),
-              Text("profile"),
-              SettingsPage()
-            ],
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              switch(index){
+                case 0:
+                  return const WatchlistGroup();
+                case 1:
+                  return const CalendarPage();
+                case 2:
+                  return const Text("search");
+                case 3:
+                  return const Text("profile");
+                case 4:
+                  return const SettingsPage();
+                default:
+                  return Container();
+              }
+            },
           )
         ),
       ),
@@ -120,5 +131,24 @@ class _NavbarState extends State<Navbar> {
         return Image.network(state?.avatarMedium ?? "https://s4.anilist.co/file/anilistcdn/user/avatar/medium/default.png",width: 30,height: 30);
       }
     );
+  }
+}
+
+class _BuildTabContent extends StatelessWidget{
+
+  const _BuildTabContent(this.index, this.child);
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final TabController controller = DefaultTabController.of(context);
+
+    // Only build content if it's the selected tab
+    if (controller.index == index) {
+      return child;
+    }
+    return Container(); 
   }
 }
