@@ -21,3 +21,15 @@
 ### Fixed
 
 * Fixed weird bug when doing fresh start of app
+
+## [V20241121.1] - 2024-11-21
+
+### Added
+
+* Added media profile
+* Added calendar
+* Allow users to filter by watched on calendar
+
+### Unconfirmed bugs
+
+* Sometimes the app hit the rate limit for no reason. This should be solved by lazy loading query widgets but due to the unpredicatble nature of the bug, it's hard to be sure

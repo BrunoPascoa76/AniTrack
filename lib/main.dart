@@ -2,6 +2,7 @@ import 'package:anitrack/model/user.dart';
 import 'package:anitrack/service/anilist_auth.dart';
 import 'package:anitrack/ui/client_setup_page.dart';
 import 'package:anitrack/ui/navbar.dart';
+import 'package:anitrack/utils/calendar_cubit.dart';
 import 'package:anitrack/utils/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +47,8 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => UserBloc()),
+        BlocProvider(create: (context) => CalendarCubit()),
+        BlocProvider(create: (context) => SelectedPageCubit()),
       ],
       child: BlocBuilder<ThemeCubit,ThemeController>(
         builder: (context,themeController) {

@@ -29,7 +29,8 @@ class Watchlist extends StatelessWidget {
                 "userId": state.id,
                 "status": status,
                 "type":"ANIME"
-              }
+              },
+              pollInterval: const Duration(seconds: 30)
             ),
             builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }){
               if(result.hasException){
