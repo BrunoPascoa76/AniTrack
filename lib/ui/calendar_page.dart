@@ -59,7 +59,7 @@ Widget _generateCalendarColumn(BuildContext context, List airingSchedules, int w
   List validAiringSchedules = airingSchedules.where((element)=>DateTime.fromMillisecondsSinceEpoch((element["airingAt"] as int)*1000).weekday==weekday).toList();
 
   if(validAiringSchedules.isEmpty){
-    return const Center(child:Column(children: [
+    return const Center(child:Column(mainAxisSize: MainAxisSize.min,children: [
       Text("(╥﹏╥)",style: TextStyle(fontSize: 50)),
       Text("Nothing airing today",style: TextStyle(fontSize: 20))
     ]));
