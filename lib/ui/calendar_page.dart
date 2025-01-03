@@ -29,7 +29,7 @@ class CalendarPage extends StatelessWidget {
                         _generateSelectableBox(theme, calendarCubit,
                             CalendarDisplay.all, state, "All"),
                         _generateSelectableBox(theme, calendarCubit,
-                            CalendarDisplay.watching, state, "Watching")
+                            CalendarDisplay.watching, state, "Watchlist")
                       ])
                     ]),
                 bottom: TabBar(isScrollable: true, tabs: _getNext7DaysTabs())),
@@ -69,7 +69,7 @@ class _LazyFetchCalendar extends StatelessWidget {
               variables: {
                 "userId": state!.id,
                 "type": "ANIME",
-                "status": "CURRENT"
+                "statusIn": const ["CURRENT","PLANNING"]
               }),
           builder: (QueryResult result,
               {VoidCallback? refetch, FetchMore? fetchMore}) {
@@ -81,7 +81,7 @@ class _LazyFetchCalendar extends StatelessWidget {
             }
             //return Center(child:Text(result.data!["MediaListCollection"]["lists"][0]["entries"].toString()));
             return _calendarQuery(display,context,
-                result.data!["MediaListCollection"]["lists"][0]["entries"]);
+                result.data!["MediaListCollection"]["lists"][0]["entries"]+result.data!["MediaListCollection"]["lists"][1]["entries"]);
           });
     });
   }
@@ -259,8 +259,8 @@ String _getCalendarQueryString(CalendarDisplay display) {
 
 String _getWatchingQueryString() {
   return r"""
-    query GetMediaList($userId: Int, $type: MediaType, $status: MediaListStatus) {
-      MediaListCollection(userId: $userId, type: $type, status: $status) {
+    query GetMediaList($userId: Int, $type: MediaType, $statusIn: [MediaListStatus]) {
+      MediaListCollection(userId: $userId, type: $type, status_in: $statusIn) {
         lists {
           name
           status
